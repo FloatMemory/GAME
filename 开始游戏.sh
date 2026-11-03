@@ -5,7 +5,7 @@ if command -v open >/dev/null 2>&1; then
   open "$SCRIPT_DIR/index.html"
 elif command -v xdg-open >/dev/null 2>&1; then
   xdg-open "$SCRIPT_DIR/index.html"
-elnelif command -v sensible-browser >/dev/null 2>&1; then
+elif command -v sensible-browser >/dev/null 2>&1; then
   sensible-browser "$SCRIPT_DIR/index.html"
 else
   printf 'Open this file in a browser: %s\n' "$SCRIPT_DIR/index.html"
