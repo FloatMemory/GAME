@@ -1,187 +1,858 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#090b0d">
-<title>零点之后 — 午夜旅馆</title>
-<style>
-:root{color-scheme:dark;--ink:#ddd5c8;--muted:#9a9388;--red:#a64d46}*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:16px;background:#090b0d;color:var(--ink);font:15px/1.55 Georgia,"Noto Serif SC",serif;display:grid;place-items:center}.shell{width:min(1056px,100%)}header{display:flex;justify-content:space-between;align-items:end;margin:0 0 10px}.eyebrow{font:10px Arial,sans-serif;letter-spacing:.25em;color:var(--red);text-transform:uppercase}h1{font-size:clamp(23px,4vw,34px);font-weight:400;letter-spacing:.12em;margin:2px 0}.subtitle{text-align:right;font-size:12px;color:var(--muted)}.frame{position:relative;background:#050607;border:1px solid #45413b;box-shadow:0 16px 70px #000b;overflow:hidden}.frame:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 65%,#0004),repeating-linear-gradient(0deg,transparent 0 3px,#00000008 4px 5px)}canvas{display:block;width:100%;height:auto;image-rendering:pixelated}.overlay{position:absolute;inset:0;display:grid;place-items:center;padding:16px;background:#060809db;z-index:2;text-align:center}.card{width:min(480px,100%);padding:clamp(20px,5vw,40px);background:#101315f5;border:1px solid #514640;box-shadow:0 15px 70px #000}.card h2{font-weight:400;font-size:clamp(24px,5vw,35px);letter-spacing:.1em;margin:0 0 10px}.card p{color:#c1b9ad;margin:10px auto;max-width:40ch}.small{font-size:12px;color:var(--muted)!important}.button{border:1px solid #a34a43;background:#6c2925;color:#f1e8dc;padding:11px 26px;font:inherit;letter-spacing:.1em;cursor:pointer;margin-top:8px}.button:hover{background:#873a34}.hidden{display:none!important}.bar{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:9px 12px;background:#101315;border:1px solid #292b2c;border-top:0;font:12px Arial,sans-serif;color:#c3bdb3}.stats{display:flex;gap:16px;flex-wrap:wrap}.stat span{color:#999}.battery{display:inline-block;width:64px;height:7px;border:1px solid #666;margin-left:6px;vertical-align:1px}.battery i{height:100%;display:block;width:100%;background:#c9b276}.hint{text-align:right;color:#aaa399}.mobile{display:none;justify-content:center;gap:16px;margin-top:10px;touch-action:none;user-select:none}.dpad{text-align:center}.dpad button,.actions button{height:42px;border:1px solid #494744;background:#151819;color:#ddd;font-size:18px;min-width:48px;touch-action:none}.dpad div{display:flex;gap:5px}.actions{display:flex;gap:7px;align-items:center}.actions button{font-size:12px;width:62px}@media(max-width:650px){body{padding:10px}.subtitle{display:none}.mobile{display:flex}.bar{align-items:flex-start}.stats{gap:9px}.stat{font-size:11px}.hint{max-width:135px}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#090b0d" />
+  <title>零点之后：午夜旅馆</title>
+  <style>
+    :root {
+      --bg: #090b0d;
+      --panel: rgba(16, 19, 21, 0.92);
+      --panel2: rgba(26, 31, 34, 0.86);
+      --line: #43403d;
+      --ink: #ddd4c7;
+      --muted: #9b948a;
+      --gold: #d5bf82;
+      --red: #a04944;
+      --dark-red: #5f1d1c;
+      --green: #8ea58b;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Georgia, "Noto Serif SC", serif;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    .shell {
+      width: min(1180px, 100%);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .eyebrow {
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      font: 10px Arial, sans-serif;
+      color: var(--red);
+    }
+
+    h1 {
+      margin: 4px 0 0;
+      font-size: clamp(28px, 4vw, 42px);
+      letter-spacing: .14em;
+      font-weight: 400;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    .frame {
+      position: relative;
+      border: 1px solid var(--line);
+      background: #050607;
+      overflow: hidden;
+      box-shadow: 0 22px 80px rgba(0,0,0,.75);
+    }
+
+    .frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,255,255,0) 68%, rgba(0,0,0,.4)), repeating-linear-gradient(0deg, rgba(255,255,255,0) 0 3px, rgba(0,0,0,.06) 4px 5px);
+    }
+
+    canvas {
+      display: block; width: 100%; height: auto; image-rendering: pixelated;
+    }
+
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-top: 0;
+      font: 12px/1.5 Arial, sans-serif;
+    }
+
+    .stats {
+      display: flex; flex-wrap: wrap; gap: 18px;
+      align-items: center;
+    }
+
+    .battery {
+      display: inline-block; width: 64px; height: 8px; border: 1px solid #666; vertical-align: middle;
+      background: rgba(255,255,255,.04);
+      margin-left: 6px;
+    }
+    .battery i { display: block; width: 100%; height: 100%; background: #d5bf82; transition: width .15s ease; }
+
+    .hint {
+      color: #b8aea3; text-align: right;
+      max-width: 46ch;
+    }
+
+    .overlay {
+      position: absolute; inset: 0; z-index: 3;
+      display: grid; place-items: center; padding: 18px;
+      text-align: center; background: rgba(5, 8, 10, 0.75);
+    }
+
+    .card {
+      width: min(460px, 100%);
+      background: var(--panel);
+      border: 1px solid #534b45;
+      box-shadow: 0 18px 70px rgba(0,0,0,.7);
+      padding: clamp(20px, 3vw, 38px);
+    }
+
+    .card h2 {
+      margin: 8px 0 12px;
+      font-size: clamp(28px, 4vw, 38px);
+      letter-spacing: .08em;
+      font-weight: 400;
+    }
+
+    .card p {
+      margin: 10px auto; color: #c7c0b4; max-width: 38ch;
+    }
+
+    .small {
+      font-size: 12px; color: var(--muted) !important;
+    }
+
+    .button {
+      appearance: none; border: 1px solid #a24d45; background: #682b28; color: #f3e9de;
+      padding: 11px 26px; font: inherit; letter-spacing: .12em; cursor: pointer; margin-top: 8px;
+    }
+    .button:hover { background: #7b312e; }
+
+    .hidden { display: none !important; }
+
+    .mobile {
+      display: none;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 10px;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .dpad { text-align: center; }
+    .dpad button, .actions button {
+      touch-action: none; border: 1px solid #48443f; background: #171a1b; color: #ddd; font-size: 18px; min-width: 48px; height: 42px;
+    }
+    .dpad div { display: flex; gap: 6px; justify-content: center; margin-top: 4px; }
+    .actions { display: flex; gap: 8px; }
+    .actions button { font-size: 12px; width: 72px; }
+
+    @media (max-width: 700px) {
+      body { padding: 12px; }
+      .subtitle { display: none; }
+      .hud { flex-direction: column; align-items: flex-start; }
+      .hint { text-align: left; }
+      .mobile { display: flex; }
+    }
+  </style>
 </head>
-<body><main class="shell">
-<header><div><div class="eyebrow">A small horror game · 01</div><h1>零点之后</h1></div><div class="subtitle">白榆旅馆 · 第七码头<br>1998年11月17日　23:57</div></header>
-<section class="frame" aria-label="游戏画面"><canvas id="game" width="1056" height="672" aria-label="午夜旅馆探索游戏"></canvas>
-<div class="overlay" id="overlay"><div class="card"><div class="eyebrow">白榆旅馆 · 失物招领处</div><h2 id="cardTitle">最后一位住客</h2><p id="cardText">电梯在零点停下。走廊尽头的电话响了三次，而前台说——这层楼早在二十年前就封了。</p><p class="small">找到三张值班记录，弄清今晚发生了什么，然后离开旅馆。别让手电熄灭。</p><button class="button" id="start">进入旅馆</button><p class="small">移动：WASD / 方向键　手电：空格　调查 / 躲藏：E　暂停：P</p></div></div></section>
-<div class="bar"><div class="stats"><div class="stat">记录 <b id="notes">0 / 3</b></div><div class="stat">手电<span class="battery"><i id="battery"></i></span></div><div class="stat">时间 <b id="clock">23:57</b></div></div><div class="hint" id="hint">准备好后，进入旅馆。</div></div>
-<div class="mobile" aria-label="触屏控制"><div class="dpad"><button data-key="ArrowUp">↑</button><div><button data-key="ArrowLeft">←</button><button data-key="ArrowDown">↓</button><button data-key="ArrowRight">→</button></div></div><div class="actions"><button data-action="interact">调查 E</button><button data-action="light">手电</button></div></div>
-</main>
-<script>
-(()=>{'use strict';
-const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d'),COLS=22,ROWS=14,T=48;
-const grid=Array.from({length:ROWS},()=>Array(COLS).fill('#'));
-function carve(x,y,w,h){for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)grid[j][i]='.'}
-carve(1,7,20,1);carve(2,2,5,5);carve(4,6,1,2);carve(8,2,6,4);carve(10,5,1,3);carve(15,2,6,5);carve(17,6,1,2);carve(2,9,6,4);carve(4,7,1,3);carve(9,9,5,4);carve(11,7,1,3);carve(15,9,6,4);carve(17,7,1,3);
-const notes=[
-  {x:3,y:3,text:'11月17日。又有人在午夜后按了七码头的电梯。监控里没有人，但楼层指示灯自己亮了。'},
-  {x:10,y:3,text:'前台说不要回应走廊里的敲门声。可今晚，敲门声是从房间里面传出来的。'},
-  {x:19,y:3,text:'如果你读到这张纸，别去地下室。那东西穿着我的制服。它已经学会用我的声音说话。'}
-];
-const batteries=[{x:6,y:4,used:false},{x:12,y:11,used:false}],closets=[{x:6,y:5},{x:13,y:4},{x:16,y:11}],exit={x:20,y:11};
-let player,ghost,keys={},running=false,dead=false,won=false,paused=false,elapsed=0,flash=100,lightOn=true,found=0,hidden=false,toast='',toastUntil=0,ghostStep=0,last=0;
-const overlay=document.querySelector('#overlay'),hint=document.querySelector('#hint');
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <div class="eyebrow">A small horror game · 02</div>
+        <h1>零点之后</h1>
+      </div>
+      <div class="subtitle">白榆旅馆 · 第七层<br>1998 年 11 月 17 日 23:57</div>
+    </header>
 
-function reset(){
-  player={x:3.3,y:7.5};
-  ghost={x:18.3,y:7.5,tx:18,ty:7};
-  keys={};
-  running=false;dead=false;won=false;paused=false;elapsed=0;flash=100;lightOn=true;found=0;hidden=false;toast='';toastUntil=0;ghostStep=0;
-  notes.forEach(n=>n.got=false);batteries.forEach(b=>b.used=false);
-}
+    <section class="frame" aria-label="游戏画面">
+      <canvas id="game" width="1100" height="700" aria-label="午夜旅馆游戏画面"></canvas>
 
-function announce(s){toast=s;toastUntil=elapsed+2.7;hint.textContent=s}
-function wall(x,y){const gx=Math.floor(x),gy=Math.floor(y);return gx<0||gy<0||gx>=COLS||gy>=ROWS||grid[gy][gx]==='#'}
-function canStand(actor,r=0.22){
-  const pts=[[actor.x-r,actor.y-r],[actor.x+r,actor.y-r],[actor.x-r,actor.y+r],[actor.x+r,actor.y+r]];
-  return pts.every(([x,y])=>!wall(x,y));
-}
-function moveEntity(obj,dx,dy){
-  const nx=obj.x+dx,ny=obj.y+dy;
-  const backupX=obj.x,backupY=obj.y;
-  if(!wall(nx-0.23,obj.y-0.23)&&!wall(nx+0.23,obj.y+0.23)) obj.x=nx;
-  if(!wall(obj.x-0.23,ny-0.23)&&!wall(obj.x+0.23,ny+0.23)) obj.y=ny;
-  if(!canStand(obj,0.24)){obj.x=backupX;obj.y=backupY;}
-}
-function nearby(o){return Math.hypot(player.x-(o.x+0.5),player.y-(o.y+0.5))<1.05}
-function showCard(title,text,button){document.querySelector('#cardTitle').textContent=title;document.querySelector('#cardText').textContent=text;document.querySelector('#start').textContent=button;overlay.classList.remove('hidden')}
-function toggleLight(){if(!running||paused||dead||won)return;if(!lightOn&&flash<=0){announce('电池已经耗尽。');return}lightOn=!lightOn;announce(lightOn?'手电亮了。':'你关掉手电，听见远处有东西在笑。')}
-function interact(){
-  if(!running||dead||won||paused)return;
-  if(hidden){hidden=false;announce('你屏住呼吸，重新回到走廊。');return}
-  for(const n of notes){if(!n.got&&nearby(n)){n.got=true;found++;announce('值班记录 '+found+' / 3：'+n.text);return}}
-  for(const b of batteries){if(!b.used&&nearby(b)){b.used=true;flash=Math.min(100,flash+48);announce('你换上了一节电池。手电恢复了一些电量。');return}}
-  for(const c of closets){if(nearby(c)){hidden=true;announce('你躲进柜子。外面传来湿漉漉的脚步声……');return}}
-  if(nearby(exit)){if(found===3){won=true;running=false;showCard('天快亮了','你冲出旅馆。身后的电梯门缓缓合上，楼层显示屏上，红色的数字仍停在：7。','再玩一次')}else announce('出口被锁住了。还缺 '+(3-found)+' 张值班记录。');return}
-  announce('什么也没有。');
-}
-function bfsPathTarget(startX,startY,targetX,targetY){
-  const queue=[[startX,startY]];
-  const prev=new Map([[`${startX},${startY}`,null]]);
-  while(queue.length){
-    const [x,y]=queue.shift();
-    if(x===targetX&&y===targetY){
-      const path=[];let cur=[x,y];
-      while(cur){
-        path.push(cur);
-        const key=`${cur[0]},${cur[1]}`;
-        if(!prev.has(key)) break;
-        cur=prev.get(key);
+      <div id="overlay" class="overlay">
+        <div class="card">
+          <div class="eyebrow">白榆旅馆 · 失物招领处</div>
+          <h2 id="cardTitle">最后一位住客</h2>
+          <p id="cardText">电梯在零点停下，走廊尽头的电话响了三次。前台说：“这层楼在二十年前就被封了。今晚不会有人真的住进来。”</p>
+          <p class="small">找到三张值班记录、拿到房间钥匙、躲过追你的东西，然后逃离旅馆。</p>
+          <button id="start" class="button">进入旅馆</button>
+          <p class="small">移动：WASD / 方向键　调查：E　手电：空格　暂停：P</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="hud">
+      <div class="stats">
+        <div class="stat">记录 <b id="notes">0 / 3</b></div>
+        <div class="stat">钥匙 <b id="keyIcon">无</b></div>
+        <div class="stat">手电 <span class="battery"><i id="battery"></i></span></div>
+        <div class="stat">时间 <b id="clock">23:57</b></div>
+      </div>
+      <div id="hint" class="hint">准备好后，进入旅馆。</div>
+    </div>
+
+    <div class="mobile" aria-label="触屏控制">
+      <div class="dpad">
+        <button data-key="ArrowUp">↑</button>
+        <div>
+          <button data-key="ArrowLeft">←</button>
+          <button data-key="ArrowDown">↓</button>
+          <button data-key="ArrowRight">→</button>
+        </div>
+      </div>
+      <div class="actions">
+        <button data-action="interact">调查</button>
+        <button data-action="light">手电</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const canvas = document.getElementById('game');
+      const ctx = canvas.getContext('2d');
+      const overlay = document.getElementById('overlay');
+      const hint = document.getElementById('hint');
+      const notesLabel = document.getElementById('notes');
+      const keyIcon = document.getElementById('keyIcon');
+      const batteryFill = document.getElementById('battery');
+      const clockLabel = document.getElementById('clock');
+      const startBtn = document.getElementById('start');
+
+      const TILE = 48;
+      const MAP_W = 22;
+      const MAP_H = 14;
+      const mapRows = [
+        "######################",
+        "#......#....#........#",
+        "#..N...#....#..B.....#",
+        "#.##.#.#.##.#.###.##.#",
+        "#....#....#.#...#....#",
+        "#.##.###..#.#.#.#.##.#",
+        "#..C......#...#......#",
+        "#..##.##.#.###.##.##.#",
+        "#........#.....#....N#",
+        "#.####.#.#####.#.##..#",
+        "#..B...#...#...#....##",
+        "#..#.#..K.#.X....#..##",
+        "#..#....#....#....#..#",
+        "######################"
+      ];
+
+      const walls = [];
+      const notes = [];
+      const batteries = [];
+      const closets = [];
+      const keySpots = [];
+      const exits = [];
+
+      const state = {
+        running: false,
+        paused: false,
+        won: false,
+        dead: false,
+        foundNotes: 0,
+        hasKey: false,
+        flash: 100,
+        lightOn: true,
+        elapsed: 0,
+        ghostStep: 0,
+        lastTime: 0,
+        keys: {},
+        ghost: { x: 17.5, y: 9.5, tx: 17, ty: 9 },
+        player: { x: 2.5, y: 11.5 },
+        hiding: false,
+        message: '',
+        messageUntil: 0,
+        audioEnabled: false,
+        heardFootsteps: false,
+        doorOpen: false,
+      };
+
+      function cell(x, y) {
+        if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) return '#';
+        return mapRows[y][x] || '#';
       }
-      return path[path.length-2] || [startX,startY];
-    }
-    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
-      const nx=x+dx,ny=y+dy;
-      if(nx<0||ny<0||nx>=COLS||ny>=ROWS) continue;
-      if(grid[ny][nx]==='#') continue;
-      const key=`${nx},${ny}`;
-      if(prev.has(key)) continue;
-      prev.set(key,[x,y]);
-      queue.push([nx,ny]);
-    }
-  }
-  return [startX,startY];
-}
-function pathStep(){
-  const sx=Math.floor(ghost.x),sy=Math.floor(ghost.y),tx=Math.floor(player.x),ty=Math.floor(player.y);
-  if(sx===tx&&sy===ty) return;
-  const next=bfsPathTarget(sx,sy,tx,ty);
-  ghost.tx=next[0];ghost.ty=next[1];
-}
-function update(dt){
-  if(!running||paused)return;
-  elapsed+=dt;
-  if(lightOn){
-    flash=Math.max(0,flash-dt*0.72);
-    if(flash<=0){lightOn=false;announce('手电没电了。黑暗里有什么东西正在靠近。')}
-  }
 
-  if(!hidden){
-    let dx=0,dy=0;
-    if(keys.w||keys.ArrowUp) dy--;
-    if(keys.s||keys.ArrowDown) dy++;
-    if(keys.a||keys.ArrowLeft) dx--;
-    if(keys.d||keys.ArrowRight) dx++;
-    if(dx&&dy){dx*=Math.SQRT1_2;dy*=Math.SQRT1_2}
-    moveEntity(player,dx*2.35*dt,dy*2.35*dt);
-  }
+      function resetSpawn() {
+        state.player.x = 2.5;
+        state.player.y = 11.5;
+        state.ghost.x = 17.5;
+        state.ghost.y = 9.5;
+        state.ghost.tx = 17;
+        state.ghost.ty = 9;
+        state.foundNotes = 0;
+        state.hasKey = false;
+        state.flash = 100;
+        state.lightOn = true;
+        state.elapsed = 0;
+        state.ghostStep = 0;
+        state.hiding = false;
+        state.message = '';
+        state.messageUntil = 0;
+        state.won = false;
+        state.dead = false;
+        state.paused = false;
+        state.heardFootsteps = false;
+        state.doorOpen = false;
 
-  if(found>0&&!hidden){
-    ghostStep-=dt;
-    if(ghostStep<=0){pathStep();ghostStep=0.48;}
-    const gx=ghost.tx+0.5-ghost.x,gy=ghost.ty+0.5-ghost.y;
-    const dist=Math.hypot(gx,gy);
-    if(dist>0.05){
-      const speed=found===3?1.22:0.78;
-      const nx=gx/dist*speed*dt,ny=gy/dist*speed*dt;
-      moveEntity(ghost,nx,ny);
-    }
-    if(Math.hypot(player.x-ghost.x,player.y-ghost.y)<0.62){
-      dead=true;running=false;showCard('它找到你了','湿冷的手从黑暗里伸出来。旅馆又多了一位永远不会退房的住客。','再试一次');
-    }
-  }
+        notes.forEach(n => n.collected = false);
+        batteries.forEach(b => b.used = false);
+        keySpots.forEach(k => k.collected = false);
+      }
 
-  document.querySelector('#notes').textContent=found+' / 3';
-  document.querySelector('#battery').style.width=flash+'%';
-  document.querySelector('#battery').style.background=flash<25?'#a64d46':'#c9b276';
-  document.querySelector('#clock').textContent='23:'+String((57+Math.floor(elapsed/4))%60).padStart(2,'0');
-  if(toastUntil<elapsed){
-    hint.textContent = hidden ? '你藏在柜子里。按 E 离开。' : (found===3 ? '记录齐了。找到出口。' : 'WASD 移动 · E 调查 · 空格开关手电');
-  }
-}
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#111312';ctx.fillRect(0,0,canvas.width,canvas.height);
-  for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++){const px=x*T,py=y*T;if(grid[y][x]==='#'){ctx.fillStyle='#252725';ctx.fillRect(px,py,T,T);ctx.fillStyle='#30322f';ctx.fillRect(px+2,py+2,T-4,3);ctx.fillStyle='#1b1d1b';ctx.fillRect(px+3,py+T-5,T-6,3)}else{ctx.fillStyle=((x+y)%2)?'#343531':'#302f2b';ctx.fillRect(px,py,T,T);ctx.strokeStyle='#3c3a34';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(px+5,py+T-7);ctx.lineTo(px+T-8,py+T-7);ctx.stroke();}}
-  [[3,2,'03'],[9,2,'07'],[16,2,'12'],[3,9,'18'],[10,9,'21'],[16,9,'27']].forEach(([x,y,n])=>{ctx.fillStyle='#aaa08f';ctx.font='11px Arial';ctx.fillText(n,x*T+8,y*T+15)});
-  notes.forEach(n=>{if(n.got)return;const x=n.x*T+24,y=n.y*T+26;ctx.fillStyle='#b9a67c';ctx.save();ctx.translate(x,y);ctx.rotate(-.08);ctx.fillRect(-8,-10,16,20);ctx.fillStyle='#50483a';ctx.fillRect(-5,-5,10,1);ctx.fillRect(-5,0,8,1);ctx.fillRect(-5,5,9,1);ctx.restore()});
-  batteries.forEach(b=>{if(b.used)return;ctx.fillStyle='#b0a36f';ctx.fillRect(b.x*T+17,b.y*T+19,14,9);ctx.fillStyle='#eee0a1';ctx.fillRect(b.x*T+30,b.y*T+21,3,5)});
-  closets.forEach(c=>{ctx.fillStyle='#4b342b';ctx.fillRect(c.x*T+8,c.y*T+5,32,38);ctx.strokeStyle='#73513c';ctx.strokeRect(c.x*T+8,c.y*T+5,32,38);ctx.fillStyle='#bd9462';ctx.fillRect(c.x*T+34,c.y*T+24,2,3)});
-  ctx.fillStyle=found===3?'#7b3730':'#3b302b';ctx.fillRect(exit.x*T+8,exit.y*T+4,32,43);ctx.strokeStyle='#9a6951';ctx.strokeRect(exit.x*T+8,exit.y*T+4,32,43);ctx.fillStyle='#d2a368';ctx.beginPath();ctx.arc(exit.x*T+34,exit.y*T+27,2,0,Math.PI*2);ctx.fill();
-  if(found>0){const pulse=.85+Math.sin(elapsed*6)*.1;ctx.save();ctx.translate(ghost.x*T,ghost.y*T);ctx.scale(pulse,1);ctx.fillStyle='#b4b1a6';ctx.globalAlpha=.88;ctx.beginPath();ctx.ellipse(0,0,12,17,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#302322';ctx.beginPath();ctx.arc(-4,-3,2,0,7);ctx.arc(4,-3,2,0,7);ctx.fill();ctx.restore()}
-  if(!hidden){const px=player.x*T,py=player.y*T;ctx.fillStyle='#b9b1a3';ctx.beginPath();ctx.arc(px,py,9,0,Math.PI*2);ctx.fill();ctx.fillStyle='#232522';ctx.beginPath();ctx.arc(px,py-2,5,0,Math.PI*2);ctx.fill()}
-  const darkness=lightOn?(.87+(100-flash)/100*.07):.965;ctx.save();ctx.fillStyle=`rgba(3,5,7,${darkness})`;ctx.fillRect(0,0,canvas.width,canvas.height);
-  if(lightOn&&!hidden){ctx.globalCompositeOperation='destination-out';const radius=Math.max(120,260*flash/100),glow=ctx.createRadialGradient(player.x*T,player.y*T,24,player.x*T,player.y*T,radius);glow.addColorStop(0,'rgba(0,0,0,.98)');glow.addColorStop(.58,'rgba(0,0,0,.8)');glow.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(player.x*T,player.y*T,radius,0,Math.PI*2);ctx.fill();}
-  ctx.restore();
-  const near=Math.hypot(player.x-ghost.x,player.y-ghost.y);if(found&&!hidden&&near<3.5){ctx.fillStyle=`rgba(130,20,15,${(1-near/3.5)*.12})`;ctx.fillRect(0,0,canvas.width,canvas.height)}
-  if(toastUntil>elapsed&&toast){ctx.fillStyle='#e7dcc7';ctx.font='16px Georgia';ctx.textAlign='center';ctx.shadowColor='#000';ctx.shadowBlur=6;ctx.fillText(toast.length>52?toast.slice(0,51)+'…':toast,canvas.width/2,canvas.height-28);ctx.shadowBlur=0;ctx.textAlign='left'}
-  if(paused){ctx.fillStyle='#0009';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#eee';ctx.font='28px Georgia';ctx.textAlign='center';ctx.fillText('已暂停 · 按 P 继续',canvas.width/2,canvas.height/2);ctx.textAlign='left'}
-}
-function begin(){
-  reset();
-  running=true;last=performance.now();
-  overlay.classList.add('hidden');
-  announce('电梯门在你身后关上。');
-}
+      function announce(text) {
+        state.message = text;
+        state.messageUntil = state.elapsed + 2.8;
+        hint.textContent = text;
+      }
 
-document.querySelector('#start').addEventListener('click',begin);
+      function parseMap() {
+        for (let y = 0; y < mapRows.length; y++) {
+          for (let x = 0; x < mapRows[y].length; x++) {
+            const ch = mapRows[y][x];
+            if (ch === '#') walls.push({ x, y });
+            if (ch === 'N') notes.push({ x: x + 0.5, y: y + 0.5, collected: false, text: '房间记录：有人在午夜后曾在走廊里听见低语。' });
+            if (ch === 'B') batteries.push({ x: x + 0.5, y: y + 0.5, used: false });
+            if (ch === 'C') closets.push({ x: x + 0.5, y: y + 0.5 });
+            if (ch === 'K') keySpots.push({ x: x + 0.5, y: y + 0.5, collected: false });
+            if (ch === 'X') exits.push({ x: x + 0.5, y: y + 0.5 });
+          }
+        }
+      }
 
-window.addEventListener('keydown',e=>{
-  const k=e.key.length===1?e.key.toLowerCase():e.key;
-  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(k)) e.preventDefault();
-  if(k==='e'&&!e.repeat) interact();
-  if(k===' '&&!e.repeat) toggleLight();
-  if(k==='p'&&!e.repeat&&running){paused=!paused;hint.textContent=paused?'已暂停，按 P 继续。':'继续探索。';last=performance.now();}
-  keys[k]=true;
-});
-window.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;keys[k]=false});
-window.addEventListener('blur',()=>{keys={};if(running&&!paused){paused=true;hint.textContent='已暂停，按 P 继续。'}});
+      function canStand(obj, r = 0.24) {
+        const pts = [
+          [obj.x - r, obj.y - r],
+          [obj.x + r, obj.y - r],
+          [obj.x - r, obj.y + r],
+          [obj.x + r, obj.y + r],
+        ];
+        return pts.every(([px, py]) => cell(Math.floor(px), Math.floor(py)) !== '#');
+      }
 
-document.querySelectorAll('.dpad button').forEach(btn=>{
-  const k=btn.dataset.key,up=e=>{e.preventDefault();keys[k]=false};
-  btn.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true;btn.setPointerCapture?.(e.pointerId)});
-  btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('lostpointercapture',up);
-});
-document.querySelector('[data-action="interact"]').addEventListener('pointerdown',e=>{e.preventDefault();interact()});
-document.querySelector('[data-action="light"]').addEventListener('pointerdown',e=>{e.preventDefault();toggleLight()});
+      function moveEntity(obj, dx, dy) {
+        const nx = obj.x + dx;
+        const ny = obj.y + dy;
+        const oldX = obj.x;
+        const oldY = obj.y;
 
-function loop(now){const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;update(dt);draw();requestAnimationFrame(loop)}
-reset();requestAnimationFrame(loop);
-})();
-</script></body></html>
+        if (canStand({ x: nx, y: obj.y }, 0.25)) obj.x = nx;
+        if (canStand({ x: obj.x, y: ny }, 0.25)) obj.y = ny;
+        if (!canStand(obj, 0.25)) {
+          obj.x = oldX;
+          obj.y = oldY;
+        }
+      }
+
+      function nearby(a, b, dist = 1.05) {
+        return Math.hypot(a.x - b.x, a.y - b.y) < dist;
+      }
+
+      function toggleFlashlight() {
+        if (!state.running || state.paused || state.dead || state.won) return;
+        if (!state.lightOn && state.flash <= 0) {
+          announce('手电已经耗尽，按住不动也无法重新亮起。');
+          return;
+        }
+        state.lightOn = !state.lightOn;
+        announce(state.lightOn ? '手电亮了，走廊里终于能看清一点。' : '你把手电熄了。黑暗里有什么东西正在呼吸。');
+      }
+
+      function interact() {
+        if (!state.running || state.paused || state.dead || state.won) return;
+
+        if (state.hiding) {
+          state.hiding = false;
+          announce('你从柜子里挪出来，脚背撞到地板，声音很响。');
+          return;
+        }
+
+        for (const n of notes) {
+          if (!n.collected && nearby(state.player, n, 1.1)) {
+            n.collected = true;
+            state.foundNotes += 1;
+            announce('记录已找到：' + n.text);
+            playTone(440, 0.08, 0.05, 'triangle');
+            return;
+          }
+        }
+
+        for (const b of batteries) {
+          if (!b.used && nearby(state.player, b, 1.0)) {
+            b.used = true;
+            state.flash = Math.min(100, state.flash + 38);
+            announce('你捡到一节备用电池，手电恢复了一些亮度。');
+            playTone(620, 0.08, 0.09, 'sawtooth');
+            return;
+          }
+        }
+
+        for (const k of keySpots) {
+          if (!k.collected && nearby(state.player, k, 1.0)) {
+            k.collected = true;
+            state.hasKey = true;
+            announce('你找到一把生锈的房间钥匙。出口门应该会打开。');
+            playTone(820, 0.09, 0.12, 'square');
+            return;
+          }
+        }
+
+        for (const c of closets) {
+          if (nearby(state.player, c, 0.9)) {
+            state.hiding = true;
+            announce('你躲进柜子里，门外传来潮湿脚步声。');
+            return;
+          }
+        }
+
+        for (const e of exits) {
+          if (nearby(state.player, e, 1.1)) {
+            if (state.foundNotes >= 3 && state.hasKey) {
+              state.won = true;
+              state.running = false;
+              showCard('天亮了', '你撬开沉重的门，头顶的灯光忽然亮起。旅馆的门外，只有静止的凌晨和一片没被照亮的地方。你活了下来。', '再玩一次');
+              return;
+            }
+            if (state.foundNotes < 3) {
+              announce('门被锁住了。还差 ' + (3 - state.foundNotes) + ' 张记录。');
+            } else {
+              announce('门口的门链还锁着。你需要一把钥匙。');
+            }
+            return;
+          }
+        }
+
+        announce('这里什么都没有。');
+      }
+
+      function bfsPath(startX, startY, targetX, targetY) {
+        const queue = [[startX, startY]];
+        const prev = new Map([[`${startX},${startY}`, null]]);
+
+        while (queue.length) {
+          const [x, y] = queue.shift();
+          if (x === targetX && y === targetY) {
+            const path = [];
+            let cur = [x, y];
+            while (cur) {
+              path.push(cur);
+              const key = `${cur[0]},${cur[1]}`;
+              const p = prev.get(key);
+              if (!p) break;
+              cur = p;
+            }
+            return path[path.length - 2] || [startX, startY];
+          }
+
+          for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (nx < 0 || ny < 0 || nx >= MAP_W || ny >= MAP_H) continue;
+            if (cell(nx, ny) === '#') continue;
+            const key = `${nx},${ny}`;
+            if (prev.has(key)) continue;
+            prev.set(key, [x, y]);
+            queue.push([nx, ny]);
+          }
+        }
+
+        return [startX, startY];
+      }
+
+      function updateGhost(dt) {
+        if (!state.running || state.paused || state.dead || state.won) return;
+
+        if (state.foundNotes > 0 && !state.hiding) {
+          const targetX = Math.floor(state.player.x);
+          const targetY = Math.floor(state.player.y);
+          const next = bfsPath(Math.floor(state.ghost.x), Math.floor(state.ghost.y), targetX, targetY);
+          state.ghost.tx = next[0];
+          state.ghost.ty = next[1];
+
+          const dx = state.ghost.tx + 0.5 - state.ghost.x;
+          const dy = state.ghost.ty + 0.5 - state.ghost.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist > 0.01) {
+            const speed = state.foundNotes >= 3 ? 1.15 : 0.9;
+            moveEntity(state.ghost, (dx / dist) * speed * dt, (dy / dist) * speed * dt);
+          }
+
+          if (Math.hypot(state.player.x - state.ghost.x, state.player.y - state.ghost.y) < 0.75) {
+            state.dead = true;
+            state.running = false;
+            showCard('它追上你了', '门外的灯一闪，影子从走廊尽头慢慢变长。你听见自己的声音在墙里回响，然后就再也没有醒来。', '再试一次');
+          }
+        }
+      }
+
+      function updatePlayer(dt) {
+        if (!state.running || state.paused || state.dead || state.won || state.hiding) return;
+
+        let dx = 0;
+        let dy = 0;
+        if (state.keys.w || state.keys.ArrowUp) dy -= 1;
+        if (state.keys.s || state.keys.ArrowDown) dy += 1;
+        if (state.keys.a || state.keys.ArrowLeft) dx -= 1;
+        if (state.keys.d || state.keys.ArrowRight) dx += 1;
+
+        if (dx && dy) {
+          dx *= Math.SQRT1_2;
+          dy *= Math.SQRT1_2;
+        }
+
+        moveEntity(state.player, dx * 2.6 * dt, dy * 2.6 * dt);
+      }
+
+      function update(dt) {
+        if (!state.running || state.paused || state.dead || state.won) return;
+
+        state.elapsed += dt;
+
+        if (state.lightOn) {
+          state.flash = Math.max(0, state.flash - dt * 0.75);
+          if (state.flash <= 0) {
+            state.lightOn = false;
+            announce('手电没电了。黑暗里，脚步声忽然靠近了。');
+          }
+        }
+
+        updatePlayer(dt);
+        updateGhost(dt);
+
+        if (state.foundNotes >= 1 && !state.heardFootsteps) {
+          state.heardFootsteps = true;
+          announce('你听见了走廊外的脚步声，像有人在同一条走廊上一直等待。');
+        }
+
+        notesLabel.textContent = `${state.foundNotes} / 3`;
+        keyIcon.textContent = state.hasKey ? '有' : '无';
+        batteryFill.style.width = `${state.flash}%`;
+        batteryFill.style.background = state.flash < 25 ? '#a04944' : '#d5bf82';
+        clockLabel.textContent = '23:' + String((57 + Math.floor(state.elapsed / 4)) % 60).padStart(2, '0');
+
+        if (state.messageUntil < state.elapsed) {
+          const defaultHint = state.hiding ? '你藏在柜子里，按 E 再试一次。' : (state.foundNotes >= 3 && state.hasKey ? '记录和钥匙都找到了，去门口离开吧。' : 'WASD 移动 · E 调查 · 空格开关手电 · P 暂停');
+          hint.textContent = defaultHint;
+        }
+      }
+
+      function drawFloor() {
+        for (let y = 0; y < MAP_H; y++) {
+          for (let x = 0; x < MAP_W; x++) {
+            const px = x * TILE;
+            const py = y * TILE;
+            const cellChar = cell(x, y);
+
+            if (cellChar === '#') {
+              ctx.fillStyle = '#202626';
+              ctx.fillRect(px, py, TILE, TILE);
+              ctx.fillStyle = '#303632';
+              ctx.fillRect(px + 2, py + 2, TILE - 4, 4);
+              ctx.fillStyle = '#1a1d1d';
+              ctx.fillRect(px + 4, py + TILE - 7, TILE - 8, 3);
+            } else {
+              ctx.fillStyle = (x + y) % 2 === 0 ? '#2d302d' : '#34382e';
+              ctx.fillRect(px, py, TILE, TILE);
+            }
+          }
+        }
+      }
+
+      function drawObjects() {
+        for (const n of notes) {
+          if (n.collected) continue;
+          const x = n.x * TILE;
+          const y = n.y * TILE;
+          ctx.fillStyle = '#cbb88c';
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.rotate(-0.08);
+          ctx.fillRect(-8, -10, 16, 20);
+          ctx.fillStyle = '#413b30';
+          ctx.fillRect(-5, -5, 10, 1);
+          ctx.fillRect(-5, 0, 9, 1);
+          ctx.fillRect(-5, 5, 8, 1);
+          ctx.restore();
+        }
+
+        for (const b of batteries) {
+          if (b.used) continue;
+          const x = b.x * TILE;
+          const y = b.y * TILE;
+          ctx.fillStyle = '#baa85d';
+          ctx.fillRect(x - 8, y - 4, 16, 8);
+          ctx.fillStyle = '#efe3a2';
+          ctx.fillRect(x + 8, y - 3, 5, 6);
+        }
+
+        for (const k of keySpots) {
+          if (k.collected) continue;
+          const x = k.x * TILE;
+          const y = k.y * TILE;
+          ctx.fillStyle = '#b9a16d';
+          ctx.fillRect(x - 6, y - 2, 12, 4);
+          ctx.fillStyle = '#d9c58a';
+          ctx.fillRect(x - 3, y - 9, 6, 8);
+        }
+
+        for (const c of closets) {
+          const x = c.x * TILE;
+          const y = c.y * TILE;
+          ctx.fillStyle = '#4b342a';
+          ctx.fillRect(x - 10, y - 15, 20, 30);
+          ctx.strokeStyle = '#7a5845';
+          ctx.strokeRect(x - 10, y - 15, 20, 30);
+        }
+
+        for (const e of exits) {
+          const x = e.x * TILE;
+          const y = e.y * TILE;
+          ctx.fillStyle = state.foundNotes >= 3 && state.hasKey ? '#7b3730' : '#312d2a';
+          ctx.fillRect(x - 10, y - 16, 20, 32);
+          ctx.strokeStyle = '#ab7e5d';
+          ctx.strokeRect(x - 10, y - 16, 20, 32);
+          ctx.fillStyle = '#d2a368';
+          ctx.beginPath();
+          ctx.arc(x, y, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function drawEntities() {
+        const ghostX = state.ghost.x * TILE;
+        const ghostY = state.ghost.y * TILE;
+
+        if (state.foundNotes > 0) {
+          ctx.save();
+          ctx.translate(ghostX, ghostY);
+          const pulse = 0.9 + Math.sin(state.elapsed * 8) * 0.08;
+          ctx.scale(pulse, 1);
+          ctx.fillStyle = '#b9b4af';
+          ctx.globalAlpha = 0.9;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, 12, 18, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#251d1c';
+          ctx.beginPath();
+          ctx.arc(-4, -3, 2, 0, Math.PI * 2);
+          ctx.arc(4, -3, 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        const pX = state.player.x * TILE;
+        const pY = state.player.y * TILE;
+
+        if (!state.hiding) {
+          ctx.fillStyle = '#d9d0c5';
+          ctx.beginPath();
+          ctx.arc(pX, pY, 9, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#242825';
+          ctx.beginPath();
+          ctx.arc(pX, pY - 2, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function drawDarkness() {
+        ctx.save();
+        ctx.fillStyle = `rgba(5, 7, 10, ${state.lightOn ? 0.84 + (100 - state.flash) / 100 * 0.12 : 0.96})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (state.lightOn && !state.hiding) {
+          ctx.globalCompositeOperation = 'destination-out';
+          const radius = Math.max(110, 250 * (state.flash / 100));
+          const glow = ctx.createRadialGradient(state.player.x * TILE, state.player.y * TILE, 24, state.player.x * TILE, state.player.y * TILE, radius);
+          glow.addColorStop(0, 'rgba(0,0,0,1)');
+          glow.addColorStop(0.55, 'rgba(0,0,0,0.8)');
+          glow.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = glow;
+          ctx.beginPath();
+          ctx.arc(state.player.x * TILE, state.player.y * TILE, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.restore();
+
+        if (state.foundNotes > 0 && !state.hiding) {
+          const d = Math.hypot(state.player.x - state.ghost.x, state.player.y - state.ghost.y);
+          if (d < 3.8) {
+            ctx.fillStyle = `rgba(150, 38, 30, ${(1 - d / 3.8) * 0.12})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+          }
+        }
+      }
+
+      function drawPause() {
+        if (!state.paused) return;
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#f0eadf';
+        ctx.font = '30px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText('已暂停 · 按 P 继续', canvas.width / 2, canvas.height / 2);
+        ctx.textAlign = 'left';
+      }
+
+      function render() {
+        drawFloor();
+        drawObjects();
+        drawEntities();
+        drawDarkness();
+        drawPause();
+      }
+
+      function showCard(title, text, buttonText) {
+        document.getElementById('cardTitle').textContent = title;
+        document.getElementById('cardText').textContent = text;
+        startBtn.textContent = buttonText;
+        overlay.classList.remove('hidden');
+      }
+
+      function beginGame() {
+        resetSpawn();
+        state.running = true;
+        state.lastTime = performance.now();
+        overlay.classList.add('hidden');
+        announce('电梯门在你身后关上。');
+        ensureAudio();
+      }
+
+      function keyDown(ev) {
+        const key = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key;
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(key)) ev.preventDefault();
+
+        if (key === 'e' && !ev.repeat) interact();
+        if (key === ' ' && !ev.repeat) toggleFlashlight();
+        if (key === 'p' && !ev.repeat && state.running) {
+          state.paused = !state.paused;
+          hint.textContent = state.paused ? '已暂停，按 P 继续。' : '继续探索。';
+        }
+        state.keys[key] = true;
+      }
+
+      function keyUp(ev) {
+        const key = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key;
+        state.keys[key] = false;
+      }
+
+      function setupInput() {
+        window.addEventListener('keydown', keyDown);
+        window.addEventListener('keyup', keyUp);
+        window.addEventListener('blur', () => {
+          state.keys = {};
+          if (state.running && !state.paused) {
+            state.paused = true;
+            hint.textContent = '已暂停，按 P 继续。';
+          }
+        });
+
+        document.querySelectorAll('.dpad button').forEach((btn) => {
+          const key = btn.dataset.key;
+          const stop = e => {
+            e.preventDefault();
+            state.keys[key] = false;
+          };
+          btn.addEventListener('pointerdown', e => {
+            e.preventDefault();
+            if (key) state.keys[key] = true;
+            btn.setPointerCapture?.(e.pointerId);
+          });
+          btn.addEventListener('pointerup', stop);
+          btn.addEventListener('pointercancel', stop);
+          btn.addEventListener('lostpointercapture', stop);
+        });
+
+        document.querySelector('[data-action="interact"]').addEventListener('pointerdown', e => {
+          e.preventDefault();
+          interact();
+        });
+
+        document.querySelector('[data-action="light"]').addEventListener('pointerdown', e => {
+          e.preventDefault();
+          toggleFlashlight();
+        });
+      }
+
+      function playTone(freq, duration, gainLevel = 0.08, type = 'sine') {
+        if (!state.audioEnabled) return;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctxAudio = window.__ghostAudioCtx || new AudioCtx();
+        window.__ghostAudioCtx = ctxAudio;
+        const osc = ctxAudio.createOscillator();
+        const gain = ctxAudio.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.value = gainLevel;
+        osc.connect(gain);
+        gain.connect(ctxAudio.destination);
+        osc.start();
+        osc.stop(ctxAudio.currentTime + duration);
+      }
+
+      function ensureAudio() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx || state.audioEnabled) return;
+        const actx = new AudioCtx();
+        window.__ghostAudioCtx = actx;
+        state.audioEnabled = true;
+        const osc = actx.createOscillator();
+        const gain = actx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 48;
+        gain.gain.value = 0.02;
+        osc.connect(gain);
+        gain.connect(actx.destination);
+        osc.start();
+        const amp = { value: 0.02 };
+        gain.gain.setValueAtTime(amp.value, actx.currentTime);
+      }
+
+      function loop(ts) {
+        const dt = Math.min(0.033, Math.max(0.016, (ts - state.lastTime) / 1000 || 0.016));
+        state.lastTime = ts;
+
+        if (state.running && !state.paused) {
+          update(dt);
+        }
+        render();
+        requestAnimationFrame(loop);
+      }
+
+      parseMap();
+      setupInput();
+      resetSpawn();
+      startBtn.addEventListener('click', beginGame);
+      requestAnimationFrame(loop);
+    })();
+  </script>
+</body>
+</html>
